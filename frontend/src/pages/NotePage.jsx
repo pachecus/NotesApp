@@ -4,33 +4,29 @@ import { useContext, useEffect } from "react"
 import { NoteContext } from '../context/NoteContext';
 import { getNotes } from "../services/NoteService";
 
-
+// This is the 'main' page
 export const NotePage = () => {
     const { notes, setNotes } = useContext(NoteContext)
 
+    // Load all the notes ass soon as this page is loaded and when the notes in the context are changed
     useEffect(() => {
-        // Al montar el componente, obtenemos las notas del servidor
         const fetchNotes = async () => {
           try {
-            const allNotes = await getNotes(); // Llamada a la API
-            console.log('Todas las notas');
-            console.log(allNotes);
-            setNotes(allNotes); // Actualizamos el Context con las notas obtenidas
-            console.log('Notasssssssssssssss');
-            console.log(allNotes);
+            const allNotes = await getNotes(); 
+            setNotes(allNotes); 
           } catch (error) {
-            console.error('Error al obtener las notas:', error);
+            console.error('Error when retrieving all the notes:', error);
           }
         };
     
-        fetchNotes(); // Llamamos a la función para obtener las notas
+        fetchNotes();
       }, [setNotes]);
-    console.log(notes)
+    
     return (
         <div>
-            <h1>Mis notas</h1>
-            <NoteForm />
-            <NoteList notes={notes} setNotes={setNotes}/>
+            <h1>My Notes</h1>
+            <NoteForm /> {/* This is the form to add new notes */}
+            <NoteList notes={notes} setNotes={setNotes}/> {/* List of all the notes */}
         </div>
     )
 }

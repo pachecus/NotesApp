@@ -1,58 +1,58 @@
-import { Link } from "react-router-dom";  // Importamos Link para la navegación
-import { deleteNote, toggleArchive, getNotes } from "../services/NoteService";  // Importamos las funciones del servicio
+import { Link } from "react-router-dom"; // I use this hook to navigate to the edit page
+import { deleteNote, toggleArchive, getNotes } from "../services/NoteService";
 
 export const NoteList = ({ notes, setNotes }) => {
-  // Función para eliminar una nota
+
+  // When deleting a note, the deleteNote function is called, and the deleted note is removed from all the notes
   const handleDelete = async (id) => {
     try {
-      await deleteNote(id); // Llamamos al servicio para eliminar la nota
-      // Después de eliminar la nota, recargamos la lista de notas
+      await deleteNote(id);
       setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
     } catch (error) {
-      console.error('Error al eliminar la nota:', error);
+      console.error('Error when deleting the note:', error);
     }
   };
 
-  // Función para archivar o desarchivar una nota
+  // Function that toggles the state of archived and unarchived of a note
   const handleToggleArchive = async (id) => {
     try {
-      const updatedNote = await toggleArchive(id); // Llamamos al servicio para archivar o desarchivar
-      // Actualizamos el estado de las notas
+      const updatedNote = await toggleArchive(id);
+      // Setting the new state of archived of a note
       setNotes(prevNotes => 
         prevNotes.map(note => 
           note.id === id ? { ...note, archived: updatedNote.archived } : note
         )
       );
     } catch (error) {
-      console.error('Error al archivar o desarchivar la nota:', error);
+      console.error('Error when archiving or unarchiving a note:', error);
     }
   };
 
-  // Función para listar todas las notas
+  // Function to get all the current saved notes
   const handleListAllNotes = async () => {
     try {
-      const allNotes = await getNotes();  // Llamamos a getNotes sin parámetros para obtener todas las notas
-      setNotes(allNotes);  // Actualizamos el estado con todas las notas
+      const allNotes = await getNotes(); 
+      setNotes(allNotes);  
     } catch (error) {
-      console.error('Error al obtener todas las notas:', error);
+      console.error('Error when getting all the notes:', error);
     }
   };
 
-  // Función para listar las notas activas
+  // Function to get all the unarchived, or active, notes
   const handleListActiveNotes = async () => {
     try {
-      const activeNotes = await getNotes('false');  // Llamamos a getNotes con 'archived=false' para obtener las activas
-      setNotes(activeNotes);  // Actualizamos el estado con las notas activas
+      const activeNotes = await getNotes('false');  // The same function is used for getting all notes and only getting unarchived notes, but 'false' is passed through the parammeters
+      setNotes(activeNotes); 
     } catch (error) {
       console.error('Error al obtener las notas activas:', error);
     }
   };
 
-  // Función para listar las notas archivadas
+  // Function to get all the archived notes
   const handleListArchivedNotes = async () => {
     try {
-      const archivedNotes = await getNotes('true');  // Llamamos a getNotes con 'archived=true' para obtener las archivadas
-      setNotes(archivedNotes);  // Actualizamos el estado con las notas archivadas
+      const archivedNotes = await getNotes('true'); // The same function is used aswell, but now with 'true'
+      setNotes(archivedNotes); 
     } catch (error) {
       console.error('Error al obtener las notas archivadas:', error);
     }
@@ -60,31 +60,28 @@ export const NoteList = ({ notes, setNotes }) => {
 
   return (
     <div>
-      <h2>Lista de Notas</h2>
-
-      {/* Botones para filtrar notas activas, archivadas o todas */}
+      <h2>All my Notes</h2>
+      {/* Filter to see all notes, active notes and archived notes */}
       <div>
-        <button onClick={handleListAllNotes}>Mostrar Todas las Notas</button>
-        <button onClick={handleListActiveNotes}>Mostrar Notas Activas</button>
-        <button onClick={handleListArchivedNotes}>Mostrar Notas Archivadas</button>
+        <button onClick={handleListAllNotes}>All Notes</button>
+        <button onClick={handleListActiveNotes}>Active Notes</button>
+        <button onClick={handleListArchivedNotes}>Archived Notes</button>
       </div>
 
-      {notes.length === 0 ? (
-        <p>No tienes notas guardadas.</p>
+      {notes.length === 0 ? ( 
+        <p>There are no notes.</p> // Id there are no notes
       ) : (
         <ul>
-          {notes.map((note) => (
+          {notes.map((note) => ( // For each note show ,title, content, edit button that redirects to edit page, delete button and archived/unarchived button
             <li key={note.id}>
               <strong>{note.title}</strong>
               <p>{note.content}</p>
               <Link to={`/edit/${note.id}`}>
-                <button>Editar</button> {/* Botón para editar */}
+                <button>Edit</button> 
               </Link>
-              <button onClick={() => handleDelete(note.id)}>Eliminar</button> {/* Botón para eliminar */}
-              
-              {/* Botón para archivar o desarchivar */}
+              <button onClick={() => handleDelete(note.id)}>Delete</button>              
               <button onClick={() => handleToggleArchive(note.id)}>
-                {note.archived ? 'Desarchivar' : 'Archivar'}
+                {note.archived ? 'Unarchive' : 'Archive'}
               </button>
             </li>
           ))}
@@ -93,3 +90,4 @@ export const NoteList = ({ notes, setNotes }) => {
     </div>
   );
 };
+

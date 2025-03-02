@@ -1,176 +1,137 @@
-const Note = require('../models/note');
+// import the noteModel
+const Note = require('../models/noteModel');
 
-// Crear una nueva nota
+// Endpoint for creating a new note
 const createNote = async (req, res) => {
   try {
+    // Creation of a Note with Title and Content
     const { title, content } = req.body;
+    // Create a new note in the Database
     const newNote = await Note.create({ title, content });
+    // Successfull note Creation
+    console.log('New Note Created with title:', title, " and content:", content);
     res.status(201).json(newNote);
-    console.log('Se creo una nueva nota');
-    console.log(title, content)
   } catch (error) {
-    console.error('Error al crear la nota:', error);
-    res.status(500).json({ message: 'Error al crear la nota' });
+    // Error when creating the Note
+    console.error('Error when creating note:', error);
+    res.status(500).json({ message: 'Error when creating note' });
   }
 };
 
-// // Obtener todas las notas
-// const getNotes = async (req, res) => {
-//   try {
-//     const notes = await Note.findAll();
-//     console.log(notes);
-//     res.status(200).json(notes);
-//   } catch (error) {
-//     console.error('Error al obtener las notas:', error);
-//     res.status(500).json({ message: 'Error al obtener las notas' });
-//   }
-// };
-
-// Controllers/notesController.js
-
-// const getNotes = async (req, res) => {
-//     const { archived } = req.query;  // Obtener el valor de 'archived' de la consulta
-  
-//     try {
-//       // Si 'archived' es 'true', obtenemos solo las notas archivadas
-//       // Si 'archived' es 'false' o no se pasa, obtenemos solo las notas activas
-//       const notes = archived === 'true'
-//         ? await Note.findAll({ where: { archived: true } })  // Notas archivadas
-//         : await Note.findAll({ where: { archived: false } });  // Notas activas
-  
-//       console.log(notes);  // Mostrar las notas obtenidas (opcional para depuración)
-//       res.status(200).json(notes);  // Devolver las notas como respuesta
-//     } catch (error) {
-//       console.error('Error al obtener las notas:', error);
-//       res.status(500).json({ message: 'Error al obtener las notas' });
-//     }
-//   };
-
+// Endpoint for retriveing all the Notes
 const getNotes = async (req, res) => {
-    const { archived } = req.query;  // Obtener si el parámetro 'archived' está presente en la consulta
-    
+    const { archived } = req.query; // true = archived notes, false = active notes, nothing = all notes
     try {
       let notes;
-  
-      // Si 'archived' es 'true', obtener solo las notas archivadas
       if (archived === 'true') {
         notes = await Note.findAll({ where: { archived: true } });
+        console.log('Requesting archived notes');
       }
-      // Si 'archived' es 'false', obtener solo las notas activas
       else if (archived === 'false') {
         notes = await Note.findAll({ where: { archived: false } });
+        console.log('Requesting active notes');
       }
-      // Si no se pasa ningún valor para 'archived', obtener todas las notas
       else {
-        notes = await Note.findAll();  // Devuelve todas las notas (activas y archivadas)
+        notes = await Note.findAll(); 
+        console.log('Requesting all notes');
       }
-  
-      console.log(notes);  // Opcional: para depuración
-      res.status(200).json(notes);  // Devolver las notas como respuesta
+      res.status(200).json(notes); 
     } catch (error) {
-      console.error('Error al obtener las notas:', error);
-      res.status(500).json({ message: 'Error al obtener las notas' });
+      console.error('Error when retriveing notes:', error);
+      res.status(500).json({ message: 'Error when retriveing notes' });
     }
   };
   
-  
-  
-
+// Endpoint for updating a note
 const updateNote = async (req, res) => {
-    const { id } = req.params;  // El ID de la nota que queremos actualizar
-    const { title, content } = req.body;  // Los nuevos datos de la nota
+    const { id } = req.params;  // Note's id
+    const { title, content } = req.body;  // Notes title and content
   
     try {
-      const note = await Note.findByPk(id);  // Buscar la nota por su ID
-  
-      if (!note) {
-        return res.status(404).json({ message: 'Nota no encontrada' });
+      const note = await Note.findByPk(id);  // find the note that has de the id in the database
+      if (!note) { // The note was not found
+        return res.status(404).json({ message: 'Note not found' });
       }
   
-      // Actualizar los campos de la nota
-      note.title = title || note.title;
-      note.content = content || note.content;
+      // note.title = title || note.title;
+      // note.content = content || note.content;
+      
+      
+      note.title = title;
+      note.content = content;
   
-      // Guardar los cambios
+      // Save the updated note in the database
       await note.save();
-  
-      // Responder con la nota actualizada
+      console.log('Note updated with title:', title, " and content: ",content);
       return res.json(note);
     } catch (error) {
-      console.error('Error al actualizar la nota:', error);
-      return res.status(500).json({ message: 'Error al actualizar la nota' });
+      console.error('Error when updating note:', error);
+      return res.status(500).json({ message: 'Error when updating note' });
     }
   };
 
-// Obtener una nota por ID
+// Endpoint to get an specific note by its id
 const getNoteById = async (req, res) => {
-    const { id } = req.params; // Obtener el ID de la URL
-  
+    const { id } = req.params; 
     try {
-      const note = await Note.findByPk(id); // Buscar la nota por su ID
+      // find the note with the id in the database
+      const note = await Note.findByPk(id); 
   
+      // If the note does not exist return 404
       if (!note) {
         return res.status(404).json({ message: 'Nota no encontrada' });
       }
-  
-      res.status(200).json(note); // Si se encuentra la nota, devolverla
+      console.log('Getting note by id:', id);
+      res.status(200).json(note); 
     } catch (error) {
-      console.error('Error al obtener la nota por ID:', error);
-      res.status(500).json({ message: 'Error al obtener la nota' });
+      console.error('Error when retriveing note by ID:', error);
+      res.status(500).json({ message: 'Error when retriveing note by ID' });
     }
 };
   
-// Eliminar una nota por ID
+// Endpoint to delete an id
 const deleteNote = async (req, res) => {
-    const { id } = req.params;  // El ID de la nota que queremos eliminar
-  
+    const { id } = req.params; 
     try {
-      const note = await Note.findByPk(id);  // Buscar la nota por su ID
+      // Find the note in the database by its id
+      const note = await Note.findByPk(id);  
   
       if (!note) {
         return res.status(404).json({ message: 'Nota no encontrada' });
       }
-  
-      // Eliminar la nota
+      // If the note is found then it must be destroyed
       await note.destroy();
-  
-      res.status(200).json({ message: 'Nota eliminada correctamente' });
+      console.log('Deleting note by id:', id);
+      res.status(200).json({ message: 'Note deletetion successful' });
     } catch (error) {
-      console.error('Error al eliminar la nota:', error);
-      res.status(500).json({ message: 'Error al eliminar la nota' });
+      console.error('Error when deleting note:', error);
+      res.status(500).json({ message: 'Error when deleting note' });
     }
   };
 
-  // Controllers/notesController.js
-
-// Archivar o desarchivar una nota
+// Endpoint to archive/unarchive(active) a note
 const archiveNote = async (req, res) => {
-    const { id } = req.params;  // El ID de la nota que queremos actualizar
-  
+    const { id } = req.params;  
+
     try {
-      const note = await Note.findByPk(id);  // Buscar la nota por su ID
+      // Find the note using its id in the database
+      const note = await Note.findByPk(id);  
   
       if (!note) {
         return res.status(404).json({ message: 'Nota no encontrada' });
       }
-  
-      // Cambiar el estado de 'archived'
-      note.archived = !note.archived;  // Si estaba 'false', lo cambia a 'true' y viceversa
-  
-      // Guardar los cambios
+      
+      // Change the current state of archive to the opposite
+      note.archived = !note.archived;  
+      // Save the updated note in the database
       await note.save();
-  
-      // Responder con la nota actualizada
+      console.log('Changed archived status to note with id:', id);
       return res.status(200).json(note);
     } catch (error) {
-      console.error('Error al archivar o desarchivar la nota:', error);
-      return res.status(500).json({ message: 'Error al archivar o desarchivar la nota' });
+      console.error('Error when archiving or unarchiving a note:', error);
+      return res.status(500).json({ message: 'Error when archiving or unarchiving a note' });
     }
   };
   
-  
+  // Export the functions created in this file so they can be used from other files
   module.exports = { createNote, getNotes, updateNote, getNoteById, deleteNote, archiveNote };
-  
-  
-
-

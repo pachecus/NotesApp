@@ -1,68 +1,69 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";  // Reemplazamos useHistory por useNavigate
-import { getNoteById, updateNote } from "../services/NoteService";  // Asegúrate de tener estas funciones en el servicio
-import { NoteContext } from "../context/NoteContext";  // Contexto para actualizar las notas
+import { useParams, useNavigate } from "react-router-dom"; 
+import { getNoteById, updateNote } from "../services/NoteService"; 
+import { NoteContext } from "../context/NoteContext";  
 
 export const EditNotePage = () => {
-  const { id } = useParams();  // Obtenemos el ID de la nota desde la URL
-  const navigate = useNavigate();  // Usamos useNavigate en lugar de useHistory
-  const { notes, setNotes } = useContext(NoteContext);  // Usamos el contexto para acceder y actualizar las notas
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(true);  // Nuevo estado para indicar si estamos cargando la nota
+  const { id } = useParams(); // usted to get the note that wants to be edited
+  const navigate = useNavigate();  // to navigate to main page once the edited note has been submmited
+  const { notes, setNotes } = useContext(NoteContext);  // to update the context with the updated note
+  const [title, setTitle] = useState(''); // note that is going to be edited title
+  const [content, setContent] = useState(''); // note's thats going to be edited content
+  const [loading, setLoading] = useState(true);  // variable used to know if the note that wants to be edited had already been loaded or not
 
-  // Cargar la nota cuando el componente se monte
+  // when this page is loaded the first thing to do is retrieve the note that is going to be edited
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const note = await getNoteById(id);  // Llamamos a la API para obtener la nota
-        console.log('Nota data: ', note);
+        const note = await getNoteById(id);  
         setTitle(note.title);
         setContent(note.content);
-        setLoading(false);  // Terminamos de cargar los datos
+        setLoading(false); 
       } catch (error) {
-        console.error('Error al obtener la nota:', error);
-        setLoading(false);  // Aseguramos que se termine el estado de carga incluso si hay error
+        console.error('Error when retrieving note by id:', error);
+        setLoading(false);  
       }
     };
 
     fetchNote();
   }, [id]);
 
+  // Once the note is edited is has to be updated in the database
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!title || !content) return;
 
     const updatedNote = { title, content };
 
     try {
-      // Actualizamos la nota en el backend
+      // update the database
       await updateNote(id, updatedNote);
 
-      // Actualizamos la nota en el contexto
+      // update the notes
       const updatedNotes = notes.map((note) =>
         note.id === parseInt(id) ? { ...note, title, content } : note
       );
       setNotes(updatedNotes);
 
-      // Redirigimos a la página principal de notas
-      navigate("/");  // Reemplazamos history.push("/") por navigate("/")
+      // navigate to the main page (NotePage.jsx)
+      navigate("/");  
     } catch (error) {
-      console.error('Error al actualizar la nota:', error);
+      console.error('Error when updating note:', error);
     }
   };
 
-  if (loading) {
-    return <div>Cargando...</div>;  // Mensaje de carga mientras esperamos los datos
+  if (loading) { // While the note is not loaded this message will be displayed
+    return <div>Loading...</div>;  // I added this because i already have it in another React proyect i made: MovieSearcher2.0 https://github.com/pachecus/MovieSearcher2.0
+                                    // and it made more sense in that proyect since more data is loaded so it does show the message.
+                                    // In this proyect it doesnt since its a very small note that has to be loaded.
   }
 
   return (
     <div>
-      <h1>Editar Nota</h1>
+      <h1>Edit Note</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="title">Título</label>
+          <label htmlFor="title">Title</label>
           <input
             type="text"
             id="title"
@@ -71,14 +72,14 @@ export const EditNotePage = () => {
           />
         </div>
         <div>
-          <label htmlFor="content">Contenido</label>
+          <label htmlFor="content">Content</label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           ></textarea>
         </div>
-        <button type="submit">Guardar Cambios</button>
+        <button type="submit">Save Changes</button>
       </form>
     </div>
   );

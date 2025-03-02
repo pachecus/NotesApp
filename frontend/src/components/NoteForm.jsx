@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
-import { NoteContext } from '../context/NoteContext'; // Contexto para las notas
+import { NoteContext } from '../context/NoteContext';  // NoteContext to add new notes
 
 
 export const NoteForm = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const { addNote } = useContext(NoteContext); // Acción para agregar una nota
+    const { addNote } = useContext(NoteContext); // addNote adds a new note to the context and to the database
   
+    // When a new note is submmited its added to the context and the title and content of the form are emptied
     const handleSubmit = (e) => {
       e.preventDefault();
       if (!title || !content) return;
@@ -18,7 +19,7 @@ export const NoteForm = () => {
     return (
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="title">Título</label>
+          <label htmlFor="title">Title</label>
           <input
             type="text"
             id="title"
@@ -27,14 +28,14 @@ export const NoteForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="content">Contenido</label>
+          <label htmlFor="content">Content</label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           ></textarea>
         </div>
-        <button type="submit">Guardar Nota</button>
+        <button type="submit">Save Note</button>
       </form>
     );
 }  

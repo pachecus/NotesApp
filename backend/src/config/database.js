@@ -1,9 +1,9 @@
 const { Sequelize } = require('sequelize');
 
-// Configuración de Sequelize para SQLite
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: './database.sqlite'  // Ubicación del archivo de base de datos
+  dialect: 'sqlite', // Is a relational database
+  storage: './database.sqlite' // location of the stored data
 });
 
+// Export so it can be accesed from other files
 module.exports = sequelize;

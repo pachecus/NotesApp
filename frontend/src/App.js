@@ -1,17 +1,15 @@
 import './App.css';
 import { NotePage } from './pages/NotePage';
-import { EditNotePage } from './pages/EditNotePage'; // Importamos la nueva página de edición
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Cambié Switch por Routes
+import { EditNotePage } from './pages/EditNotePage'; 
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
 
+// Definition of which components have to be shown depending in which route is being used
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-          {/* Ruta para la página principal de notas */}
-          <Route path="/" element={<NotePage />} />
-          
-          {/* Ruta para la página de edición de notas, con el id como parámetro */}
+          <Route path="/" element={<NotePage />} />          
           <Route path="/edit/:id" element={<EditNotePage />} />
         </Routes>
       </Router>
