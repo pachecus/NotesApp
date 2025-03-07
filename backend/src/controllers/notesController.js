@@ -35,6 +35,7 @@ const getNotes = async (req, res) => {
         notes = await Note.findAll(); 
         console.log('Requesting all notes');
       }
+      console.log('Las notas son: ', notes);
       res.status(200).json(notes); 
     } catch (error) {
       console.error('Error when retriveing notes:', error);

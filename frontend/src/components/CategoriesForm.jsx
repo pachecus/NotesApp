@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { CategoriesContext } from "../context/CategoriesContext";
+
+
 
 export const CategoriesForm = () => {
     const [category, setCategory] = useState('');
+    const { addCategory } = useContext(CategoriesContext); // addNote adds a new note to the context and to the database
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!category) return;
+        addCategory({category});
         setCategory('');
       };
 

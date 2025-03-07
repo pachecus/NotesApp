@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 import { createCategory } from '../services/CategoryService';
 
+
 export const CategoriesContext = createContext(); // Create a new context to save the notes
 
 export const CategoriesProvider = ({ children }) => {

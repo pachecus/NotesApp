@@ -20,5 +20,4 @@ export const getCategories = async () => {
         console.error('Error when retrieving all the categories:', error);
         throw error;
       }
-    return;
 }

@@ -4,6 +4,7 @@ const cors = require('cors');
 const sequelize = require('./src/config/database');
 // Routes for the creating, edition, elimination and other functions 
 const notesRoutes = require('./src/routes/routesNotes');
+const categoriesRoutes = require('./src/routes/routesCategories');
 
 const app = express();
 const PORT = 5000;
@@ -18,6 +19,8 @@ app.use('/api/notes', (req, res, next) => {
 
 // When a request with /api/notes arrives use the notesRoutes
 app.use('/api/notes', notesRoutes);
+app.use('/api/categories', categoriesRoutes);
+
 
 // Inicialize server
 sequelize.sync().then(() => {
