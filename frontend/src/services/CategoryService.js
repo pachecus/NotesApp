@@ -21,3 +21,14 @@ export const getCategories = async () => {
         throw error;
       }
 }
+
+// function to delete a note, METHOD: DELETE
+export const deleteCategory = async (id) => {
+  try {
+    const response = await axios.delete(`${apiUrl}/${id}`);
+    return response.data; 
+  } catch (error) {
+    console.error('Error when deliting a category:', error);
+    throw error; 
+  }
+};

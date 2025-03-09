@@ -95,4 +95,24 @@ strong {
   text-align: center;
 }
 
+.categories-li {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.categories-li button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 20px;
+  cursor: pointer;
+}
+
+.categories-li button:hover {
+  background-color: #45a002;
+}
+
 
