@@ -21,6 +21,8 @@ export const getNotes = async (archived) => {
       const response = await axios.get(apiUrl, {
         params: { archived }
       });
+      console.log('Estoy obteniendo las notas');
+      response.data.forEach(c => console.log(c.Categories));
       return response.data;
     } catch (error) {
       console.error('Error when retrieving all the notes:', error);

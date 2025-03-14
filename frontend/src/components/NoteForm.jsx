@@ -14,9 +14,11 @@ export const NoteForm = () => {
     const handleSubmit = (e) => {
       e.preventDefault();
       if (!title || !content) return;
-      addNote({ title, content });
+      // addNote({ title, content });
+      addNote({ title, content, noteCategories});
       setTitle('');
       setContent('');
+      // setNoteCategories([]);
     };
 
 
@@ -56,9 +58,14 @@ export const NoteForm = () => {
             ) : (
                 <select onChange={handleClick}>
                 <option value="">Select the categories</option>
-                {categories.map((category) => ( // For each note show ,title, content, edit button that redirects to edit page, delete button and archived/unarchived button
-                    <option key={category.id} value={JSON.stringify(category)}>{category.name}</option>
-                ))}
+                {categories.map((category) => { // For each note show ,title, content, edit button that redirects to edit page, delete button and archived/unarchived button
+                    // if (!(category in noteCategories)) { 
+                      return (
+                        <option key={category.id} value={JSON.stringify(category)}>{category.name}</option>
+                      )
+                    }
+                // }
+                )}
                 </select>
             )}
             {noteCategories.length === 0 ? ( 

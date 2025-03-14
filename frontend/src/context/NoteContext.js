@@ -9,6 +9,8 @@ export const NoteProvider = ({ children }) => {
   const addNote = async (newNote) => { 
     try {
       const savedNote = await createNote(newNote); 
+      console.log('La nueva nota es');
+      console.log(newNote);
   
       // i had some issues when creating a new note so i added this verification as a debugging tool
       if (!savedNote || typeof savedNote !== 'object') {

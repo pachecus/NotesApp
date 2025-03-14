@@ -76,6 +76,16 @@ export const NoteList = ({ notes, setNotes }) => {
             <li key={note.id}>
               <strong>{note.title}</strong>
               <p>{note.content}</p>
+              {/* {note.Categories.map(c => {
+                console.log(c.name);
+                return(
+                  <p key={c.id}>{c.name}</p>
+                )
+              })} */}
+              {/* <p>Categorias: {note.Categories.map((c) => c.name).join(', ')}</p> */}
+              <p>{note.Categories && note.Categories.length > 0 ? 'Categories: ' + note.Categories.map((c) => c.name).join(', ') : 'No categories'}</p>
+
+
               <Link to={`/edit/${note.id}`}>
                 <button>Edit</button> 
               </Link>

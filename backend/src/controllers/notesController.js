@@ -1,15 +1,41 @@
 // import the noteModel
 const Note = require('../models/noteModel');
+const Category = require('../models/categoryModel')
 
 // Endpoint for creating a new note
 const createNote = async (req, res) => {
   try {
     // Creation of a Note with Title and Content
-    const { title, content } = req.body;
+    const { title, content, noteCategories } = req.body;
+
     // Create a new note in the Database
     const newNote = await Note.create({ title, content });
+
+    const categories = await Category.findAll({
+      where: {
+        id: noteCategories.map(category => category.id)
+      }
+    });
+
+    // 3. Asociar las categorías a la nota
+    await newNote.addCategories(categories);
+
+    // Adding categories for the note
+    // noteCategories.forEach(category => {
+      // console.log(`ID: ${category.id}`);
+      // console.log(`Name: ${category.name}`);
+      // console.log(`Created At: ${category.createdAt}`);
+      // console.log(`Updated At: ${category.updatedAt}`);
+    // });
+
     // Successfull note Creation
     console.log('New Note Created with title:', title, " and content:", content);
+    console.log('and categories');
+    noteCategories.forEach(c => {
+      console.log('ID: ', c.id);
+      console.log('Name: ', c.name);
+      console.log('');
+    });
     res.status(201).json(newNote);
   } catch (error) {
     // Error when creating the Note
@@ -24,15 +50,32 @@ const getNotes = async (req, res) => {
     try {
       let notes;
       if (archived === 'true') {
-        notes = await Note.findAll({ where: { archived: true } });
+        notes = await Note.findAll({ 
+          where: { archived: true },
+          include: {
+            model: Category,
+            through: { attributes: [] } // Omite la tabla intermedia
+          }
+      });
         console.log('Requesting archived notes');
       }
       else if (archived === 'false') {
-        notes = await Note.findAll({ where: { archived: false } });
+        notes = await Note.findAll({
+           where: { archived: false },
+           include: {
+            model: Category,
+            through: { attributes: [] } // Omite la tabla intermedia
+          }
+      });
         console.log('Requesting active notes');
       }
       else {
-        notes = await Note.findAll(); 
+        notes = await Note.findAll({
+          include: {
+            model: Category,
+            through: { attributes: [] } // Omite la tabla intermedia
+          }
+       }); 
         console.log('Requesting all notes');
       }
       console.log('Las notas son: ', notes);
@@ -76,7 +119,12 @@ const getNoteById = async (req, res) => {
     const { id } = req.params; 
     try {
       // find the note with the id in the database
-      const note = await Note.findByPk(id); 
+      const note = await Note.findByPk(id, {
+        include: [{
+          model: Category,
+          through: { attributes: [] },
+        }]
+      }); 
   
       // If the note does not exist return 404
       if (!note) {
